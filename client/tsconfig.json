@@ -1,0 +1,16 @@
+{
+   "compilerOptions": {
+    "jsx": "react-jsx",
+    "types": ["node", "react", "react-dom"],
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "allowImportingTsExtensions": true,
+    "composite": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  },
+  "include": ["src"]
+}
