@@ -3,6 +3,7 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { EntityContainer, Layout, Task } from "@/types";
+import { TaskRequest } from "@/services/TaskService";
 
 type ID = {
     id: number;
@@ -26,7 +27,7 @@ export const findEntityActiveItem = (
     id: UniqueIdentifier
 ) => {
     const entityItems = entities.flatMap((entity) => entity.items);
-    const activeItem = entityItems.find((item) => item._id === id)!;
+    const activeItem = entityItems.find((item) => item.id === id)!;
 
     return activeItem;
 };
@@ -44,7 +45,7 @@ export const findContainerId = (
     if (isContainer) return itemId;
 
     return kanban.find((container) =>
-        container.items.some((item) => item._id === itemId)
+        container.items.some((item) => item.id === itemId)
     )?.id as Layout;
 };
 
@@ -53,7 +54,7 @@ export const findContainerByItemId = (
     itemId: UniqueIdentifier
 ): EntityContainer | undefined =>
     kanban.find((container) =>
-        container.items.some((item) => item._id === itemId)
+        container.items.some((item) => item.id === itemId)
     );
 export const moveItemWithinContainer = (
     container: EntityContainer,
@@ -66,14 +67,14 @@ export const moveItemWithinContainer = (
 export const removeItem = (
     items: EntityContainer["items"],
     id: UniqueIdentifier
-) => items.filter((item) => item._id !== id);
+) => items.filter((item) => item.id !== id);
 
 export const findItemContainerAndItem = (
     itemId: UniqueIdentifier,
     kanban: EntityContainer[]
 ) => {
     for (const container of kanban) {
-        const item = container.items.find((item) => item._id === itemId);
+        const item = container.items.find((item) => item.id === itemId);
         if (item) {
             return { container, item };
         }
@@ -89,14 +90,16 @@ export const getAvailableContainers = (
     return filterBy ? options.filter((option) => option !== filterBy) : options;
 };
 
-export const formatTasksToKanban = (tasks: Task[]) => {
+export const formatTasksToKanban = (tasks: TaskRequest[]) => {
+    const addInternalId = tasks.map((task) => ({ id: task._id, ...task }));
+
     const kanban: EntityContainer[] = [
         { id: Layout.Todo, title: "To Do", items: [] },
         { id: Layout.InProgress, title: "In Progress", items: [] },
         { id: Layout.Done, title: "Done", items: [] },
     ];
 
-    tasks.forEach((task) => {
+    addInternalId.forEach((task) => {
         kanban.forEach((container) => {
             if (container.id === task.status) {
                 container.items[task.position] = task;

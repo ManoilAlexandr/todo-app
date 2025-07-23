@@ -25,15 +25,6 @@ const TaskMultiSelecto = ({ container }: SelectoProps) => {
                 }
                 onSelect={(e) => {
                     onSelectTaskIds(e.selected.map((el) => el.dataset.id!));
-
-                    e.added.forEach((el) => {
-                        el.classList.remove("bg-card");
-                        el.classList.add("bg-blue-50");
-                    });
-                    e.removed.forEach((el) => {
-                        el.classList.remove("bg-blue-50");
-                        el.classList.add("bg-card");
-                    });
                 }}
             />
         </>

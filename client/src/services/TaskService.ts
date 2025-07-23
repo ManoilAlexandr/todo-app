@@ -3,6 +3,8 @@ import { EntityContainer, Task } from "@/types";
 import { formatTasksToKanban } from "@/lib/utils";
 import { UniqueIdentifier } from "@dnd-kit/core";
 
+export type TaskRequest = Omit<Task, "id"> & { _id: UniqueIdentifier };
+
 type TaskResponse<T> = {
     task: T;
     success: boolean;
@@ -17,7 +19,7 @@ export const taskAPI = createApi({
                 url: "/api/tasks",
             }),
             providesTags: ["Task"],
-            transformResponse: (response: Task[]) =>
+            transformResponse: (response: TaskRequest[]) =>
                 formatTasksToKanban(response),
         }),
         getTask: builder.query<TaskResponse<Task>, UniqueIdentifier>({
@@ -35,7 +37,7 @@ export const taskAPI = createApi({
         }),
         updateTask: builder.mutation<TaskResponse<Task>, Task>({
             query: (task: Task) => ({
-                url: `/api/tasks/${task._id}`,
+                url: `/api/tasks/${task.id}`,
                 method: "PUT",
                 body: task,
             }),

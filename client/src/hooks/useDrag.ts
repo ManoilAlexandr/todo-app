@@ -15,9 +15,13 @@ import {
 } from "@/lib/utils.ts";
 import { taskAPI } from "@/services/TaskService.ts";
 import { EntityContainer } from "@/types.ts";
+import { useAppDispatch, useAppSelector } from "./redux";
+import { select } from "@/store/reducers/SelectoSlice";
 
 export const useDrag = () => {
     const [kanban, setKanban] = useState<EntityContainer[]>([]);
+    const selectedIds = useAppSelector((state) => state.selecto.selectedIds);
+    const dispatch = useAppDispatch();
     const { data = [] } = taskAPI.useGetTasksQuery();
     const [updateTasks] = taskAPI.useUpdateTasksMutation();
 
@@ -29,12 +33,17 @@ export const useDrag = () => {
         null
     );
 
-    const onDragStart = useCallback((event: DragStartEvent) => {
-        const { active } = event;
-        if (!active.id) return;
+    const onDragStart = useCallback(
+        (event: DragStartEvent) => {
+            const { active } = event;
+            if (!active.id) return;
 
-        setActiveItemId(active.id);
-    }, []);
+            if (selectedIds?.length) dispatch(select([]));
+
+            setActiveItemId(active.id);
+        },
+        [selectedIds]
+    );
 
     const onDragEnd = useCallback(
         (event: DragEndEvent) => {
@@ -110,8 +119,6 @@ export const useDrag = () => {
             const updatedTasks = updatedState.flatMap((container) =>
                 reorderTasks(container.id, container.items)
             );
-
-            console.log("🚀 ~ useDrag ~ updatedTasks:", updatedTasks);
 
             updateTasks(updatedTasks);
 

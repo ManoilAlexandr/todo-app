@@ -1,20 +1,16 @@
 import express from "express";
-// import cors from "cors";
+import cors from "cors";
 import { connectDB } from "./config/db.js";
 import tasksRoutes from "./routes/tasks.route.js";
 import path from "path";
 
 const app = express();
 
-// const corsOptions = {
-//     origin: "http://localhost:5173",
-// };
+const corsOptions = {
+    origin: "http://localhost:5173",
+};
 
-app.use(
-    // cors(corsOptions),
-    express.json()
-);
-console.log("Registering /api/tasks");
+app.use(cors(corsOptions), express.json());
 app.use("/api/tasks", tasksRoutes);
 
 const __dirname = path.resolve();

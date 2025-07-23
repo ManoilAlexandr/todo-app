@@ -1,7 +1,7 @@
 import { UniqueIdentifier } from "@dnd-kit/core";
 
 export type Task = {
-    _id: UniqueIdentifier;
+    id: UniqueIdentifier;
     title: string;
     description: string;
     status: Layout;

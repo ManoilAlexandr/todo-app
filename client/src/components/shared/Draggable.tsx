@@ -3,15 +3,16 @@ import { useSortable } from "@dnd-kit/sortable";
 import type React from "react";
 import type { Task } from "@/types.ts";
 import TaskCard from "./TaskCard";
+import { memo, useMemo } from "react";
 
 type Props = {
     item: Task;
     className?: string;
 };
 
-const Draggable: React.FC<Props> = (props: Props) => {
+const Draggable: React.FC<Props> = memo((props: Props) => {
     const { item, className = "" } = props;
-    const { _id, title, description, createdAt } = item;
+    const { id, title, description, createdAt } = item;
 
     const {
         isDragging,
@@ -21,19 +22,22 @@ const Draggable: React.FC<Props> = (props: Props) => {
         setNodeRef,
         transform,
     } = useSortable({
-        id: _id,
+        id,
     });
 
-    const style = {
-        transition,
-        transform: CSS.Translate.toString(transform),
-        opacity: isDragging ? 0.5 : 1,
-    };
+    const style = useMemo(
+        () => ({
+            transition,
+            transform: CSS.Translate.toString(transform),
+            opacity: isDragging ? 0.5 : 1,
+        }),
+        [isDragging, transform, transition]
+    );
 
     return (
         <li ref={setNodeRef} style={style} {...listeners} {...attributes}>
             <TaskCard
-                id={_id}
+                id={id}
                 title={title}
                 description={description}
                 className={className}
@@ -41,6 +45,6 @@ const Draggable: React.FC<Props> = (props: Props) => {
             />
         </li>
     );
-};
+});
 
 export default Draggable;

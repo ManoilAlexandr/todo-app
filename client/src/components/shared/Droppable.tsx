@@ -20,15 +20,11 @@ const Droppable: React.FC<Props> = ({ items, id }) => {
             <SortableContext
                 id={id}
                 strategy={verticalListSortingStrategy}
-                items={items.map((item) => ({ id: item._id }))}
+                items={items}
             >
                 <ul className={cn("grid gap-3")}>
                     {items.map((item) => (
-                        <FunctionalTask
-                            key={item._id}
-                            layoutId={id}
-                            item={item}
-                        >
+                        <FunctionalTask key={item.id} layoutId={id} item={item}>
                             <Draggable item={item} />
                         </FunctionalTask>
                     ))}
