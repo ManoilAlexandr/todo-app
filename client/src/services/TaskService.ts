@@ -22,9 +22,13 @@ export const taskAPI = createApi({
             transformResponse: (response: TaskRequest[]) =>
                 formatTasksToKanban(response),
         }),
-        getTask: builder.query<TaskResponse<Task>, UniqueIdentifier>({
+        getTask: builder.query<Task, UniqueIdentifier>({
             query: (id: UniqueIdentifier) => ({
                 url: `/api/tasks/${id}`,
+            }),
+            transformResponse: (task: TaskRequest): Task => ({
+                ...task,
+                id: task._id,
             }),
         }),
         addTask: builder.mutation<TaskResponse<Task>, Task>({
